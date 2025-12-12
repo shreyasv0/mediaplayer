@@ -122,8 +122,8 @@ function updateVolumeIcon() {
 }
 
 function draw() {
-  // Draw solid, blurry background slightly darker than the MPC
-  drawBackground();
+  // Draw blurry background using dominant color
+  drawBlurryBackground();
   
   // Get audio data
   let spectrum = fft.analyze();
@@ -135,22 +135,34 @@ function draw() {
   drawCoverImage();
 }
 
-function drawBackground() {
+function drawBlurryBackground() {
   // Get RGB values from dominant color
   let r = red(dominantColor);
   let g = green(dominantColor);
   let b = blue(dominantColor);
   
-  // Create a slightly darker version of the dominant color
-  let bgColor = color(r * 0.7, g * 0.7, b * 0.7);
+  // Create a lighter version of the dominant color for the background
+  let bgColor = color(r * 0.3 + 100, g * 0.3 + 100, b * 0.3 + 100);
   
   // Fill the background with this color
   background(bgColor);
   
-  // Apply a stronger blur effect
-  drawingContext.filter = 'blur(4px)';
-  noFill();
-  rect(0, 0, width, height);
+  // Apply a strong blur effect to make the background less distracting
+  drawingContext.filter = 'blur(8px)';
+  
+  // Create some subtle visual interest with random shapes
+  noStroke();
+  fill(r * 0.2 + 50, g * 0.2 + 50, b * 0.2 + 50, 30);
+  
+  // Draw random circles for texture
+  for (let i = 0; i < 10; i++) {
+    let x = random(width);
+    let y = random(height);
+    let size = random(50, 150);
+    ellipse(x, y, size);
+  }
+  
+  // Reset the filter
   drawingContext.filter = 'none';
 }
 
