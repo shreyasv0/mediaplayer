@@ -1,7 +1,7 @@
 let song; 
 let fft;
 let coverImg;
-let accentColor;
+let dominantColor;
 
 let playBtn, volumeSlider, volumeIcon;
 let playImg, pauseImg;
@@ -25,8 +25,8 @@ function setup() {
   let canvas = createCanvas(800, 400);
   canvas.parent("playerContainer");
   
-  // Extract accent color from cover image
-  extractAccentColor();
+  // Extract dominant color from cover image
+  extractDominantColor();
 
   fft = new p5.FFT(0.8, 256);
 
@@ -39,40 +39,61 @@ function setup() {
   volumeSlider.input(updateVolumeIcon);
 }
 
-function extractAccentColor() {
-  // Sample pixels from the cover image to find dominant color
+function extractDominantColor() {
+  // Load pixels for analysis
   coverImg.loadPixels();
   
-  let r = 0, g = 0, b = 0;
-  let sampleCount = 0;
+  // Create a color frequency map
+  let colorMap = {};
   
-  // Sample from center region of image (avoiding edges)
-  let startX = floor(coverImg.width * 0.3);
-  let endX = floor(coverImg.width * 0.7);
-  let startY = floor(coverImg.height * 0.3);
-  let endY = floor(coverImg.height * 0.7);
+  // Sample pixels from the entire image
+  // Using a step to improve performance
+  let step = 5;
   
-  for (let x = startX; x < endX; x += 5) {
-    for (let y = startY; y < endY; y += 5) {
+  for (let x = 0; x < coverImg.width; x += step) {
+    for (let y = 0; y < coverImg.height; y += step) {
       let index = (x + y * coverImg.width) * 4;
-      r += coverImg.pixels[index];
-      g += coverImg.pixels[index + 1];
-      b += coverImg.pixels[index + 2];
-      sampleCount++;
+      let r = coverImg.pixels[index];
+      let g = coverImg.pixels[index + 1];
+      let b = coverImg.pixels[index + 2];
+      
+      // Quantize colors to reduce variations
+      // This groups similar colors together
+      r = Math.floor(r / 10) * 10;
+      g = Math.floor(g / 10) * 10;
+      b = Math.floor(b / 10) * 10;
+      
+      // Create a color key
+      let colorKey = `${r},${g},${b}`;
+      
+      // Increment count for this color
+      if (colorMap[colorKey]) {
+        colorMap[colorKey]++;
+      } else {
+        colorMap[colorKey] = 1;
+      }
     }
   }
   
-  // Calculate average color
-  r = floor(r / sampleCount);
-  g = floor(g / sampleCount);
-  b = floor(b / sampleCount);
+  // Find the color with the highest count
+  let maxCount = 0;
+  let dominantColorKey = "";
   
-  accentColor = color(r, g, b);
+  for (let key in colorMap) {
+    if (colorMap[key] > maxCount) {
+      maxCount = colorMap[key];
+      dominantColorKey = key;
+    }
+  }
   
-  // Apply accent color to player container
+  // Extract RGB values from the key
+  let rgb = dominantColorKey.split(",").map(Number);
+  dominantColor = color(rgb[0], rgb[1], rgb[2]);
+  
+  // Apply dominant color to player container
   let playerContainer = select("#playerContainer");
-  playerContainer.style("border-color", `rgb(${r}, ${g}, ${b})`);
-  playerContainer.style("box-shadow", `0 0 20px rgba(${r}, ${g}, ${b}, 0.3)`);
+  playerContainer.style("border-color", `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`);
+  playerContainer.style("box-shadow", `0 0 20px rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.3)`);
 }
 
 function togglePlay() {
@@ -101,28 +122,17 @@ function updateVolumeIcon() {
 }
 
 function draw() {
-  // Background with accent color
-  let r = red(accentColor);
-  let g = green(accentColor);
-  let b = blue(accentColor);
-  
-  // Create gradient background using accent color
-  for (let i = 0; i <= height; i++) {
-    let inter = map(i, 0, height, 0, 1);
-    let c = lerpColor(
-      color(r * 0.2, g * 0.2, b * 0.2), 
-      color(r * 0.5, g * 0.5, b * 0.5), 
-      inter
-    );
-    stroke(c);
-    line(0, i, width, i);
-  }
+  // Dark background
+  background(10, 10, 20);
   
   // Get audio data
   let spectrum = fft.analyze();
   
   // Draw frequency bars with HSB colors
   drawFrequencyBars(spectrum);
+  
+  // Draw cover image in the center
+  drawCoverImage();
   
   // Draw track info
   drawTrackInfo();
@@ -163,6 +173,32 @@ function drawFrequencyBars(spectrum) {
     fill(255, 30);
     rect(x, y, barWidth - 2, h/4, 5);
   }
+}
+
+function drawCoverImage() {
+  push();
+  imageMode(CENTER);
+  
+  // Calculate size to fit within the canvas while maintaining aspect ratio
+  let maxSize = min(width, height) * 0.5;
+  let imgWidth = coverImg.width;
+  let imgHeight = coverImg.height;
+  
+  let scale = maxSize / max(imgWidth, imgHeight);
+  let displayWidth = imgWidth * scale;
+  let displayHeight = imgHeight * scale;
+  
+  // Add a subtle glow effect
+  drawingContext.shadowColor = `rgba(${red(dominantColor)}, ${green(dominantColor)}, ${blue(dominantColor)}, 0.5)`;
+  drawingContext.shadowBlur = 20;
+  
+  // Draw the image
+  image(coverImg, width/2, height/2, displayWidth, displayHeight);
+  
+  // Reset shadow
+  drawingContext.shadowBlur = 0;
+  
+  pop();
 }
 
 function drawTrackInfo() {
