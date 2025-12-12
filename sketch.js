@@ -1,21 +1,18 @@
 let song;
 let fft;
 
-// UI elements
 let playBtn, volumeSlider, volumeIcon;
-
-// Icons
 let playImg, pauseImg;
 let vol0Img, vol25Img, vol50Img, vol100Img;
 
-// Album art + extracted color
+// NEW — album cover + color
 let albumCover;
 let accentColor;
 
 function preload() {
   song = loadSound("assets/song.mp3");
 
-  // Load icons
+  // Icons
   playImg = loadImage("img/play.png");
   pauseImg = loadImage("img/pause.png");
 
@@ -24,8 +21,8 @@ function preload() {
   vol50Img = loadImage("img/volume50.png");
   vol100Img = loadImage("img/volume100.png");
 
-  // Album cover
-  albumCover = loadImage("img/cover.png");
+  // NEW — album cover image
+  albumCover = loadImage("img/cover.jpg");
 }
 
 function setup() {
@@ -34,7 +31,7 @@ function setup() {
 
   fft = new p5.FFT();
 
-  // UI connections
+  // HTML connections
   playBtn = select("#playBtn");
   volumeSlider = select("#volumeSlider");
   volumeIcon = select("#volumeIcon");
@@ -42,7 +39,7 @@ function setup() {
   playBtn.mousePressed(togglePlay);
   volumeSlider.input(updateVolumeIcon);
 
-  // Extract average color from album cover (accent)
+  // NEW — extract accent color from album cover
   accentColor = getAverageColor(albumCover);
 }
 
@@ -67,17 +64,23 @@ function updateVolumeIcon() {
 }
 
 function draw() {
-  // 1. Draw album art as the main background
+  // ---- NEW BACKGROUND ----
+
+  // Album cover full background
   image(albumCover, 0, 0, width, height);
 
-  // 2. Blurred accent glow from album art
+  // Blurred accent glow behind visualizer
   drawAccentGlow();
 
-  // 3. Draw FFT visualizer on top
-  let spectrum = fft.analyze();
-
+  // Slight dark overlay to make bars readable
+  fill(0, 100);
   noStroke();
-  fill(255);
+  rect(0, 0, width, height);
+
+  // ---- ORIGINAL VISUALIZER ----
+  let spectrum = fft.analyze();
+  noStroke();
+  fill(0, 200, 255);
 
   let barWidth = width / spectrum.length * 4;
 
@@ -88,15 +91,15 @@ function draw() {
   }
 }
 
-// ----------------------------------
-// FUNCTIONS FOR COLOR + GLOW EFFECT
-// ----------------------------------
+// ------------------------------------------
+// NEW FUNCTIONS below (color + blurred glow)
+// ------------------------------------------
 
 function getAverageColor(img) {
   img.loadPixels();
 
   let r = 0, g = 0, b = 0;
-  let count = img.width * img.height;
+  const total = img.width * img.height;
 
   for (let i = 0; i < img.pixels.length; i += 4) {
     r += img.pixels[i];
@@ -104,24 +107,19 @@ function getAverageColor(img) {
     b += img.pixels[i + 2];
   }
 
-  return color(r / count, g / count, b / count);
+  return color(r / total, g / total, b / total);
 }
 
 function drawAccentGlow() {
   push();
   noStroke();
 
-  // Gradient-like blur circles
-  for (let i = 600; i > 0; i -= 40) {
-    let alpha = map(i, 600, 0, 20, 180);
+  // Large soft glow, centered
+  for (let d = 800; d > 0; d -= 50) {
+    let alpha = map(d, 800, 0, 10, 150);
     fill(red(accentColor), green(accentColor), blue(accentColor), alpha);
-    ellipse(width / 2, height / 2, i);
+    ellipse(width / 2, height / 2, d);
   }
 
   pop();
-
-  // Darken slightly to keep visualizer readable
-  fill(0, 100);
-  rect(0, 0, width, height);
 }
-
