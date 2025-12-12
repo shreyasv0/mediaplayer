@@ -122,8 +122,8 @@ function updateVolumeIcon() {
 }
 
 function draw() {
-  // Draw gradient background with lighter shades and darker color of the dominant color
-  drawGradientBackground();
+  // Draw solid, blurry background slightly darker than the MPC
+  drawBackground();
   
   // Get audio data
   let spectrum = fft.analyze();
@@ -135,40 +135,20 @@ function draw() {
   drawCoverImage();
 }
 
-function drawGradientBackground() {
+function drawBackground() {
   // Get RGB values from dominant color
   let r = red(dominantColor);
   let g = green(dominantColor);
   let b = blue(dominantColor);
   
-  // Create lighter shades of the dominant color
-  let lightColor1 = color(r * 0.3 + 170, g * 0.3 + 170, b * 0.3 + 170);
-  let lightColor2 = color(r * 0.5 + 120, g * 0.5 + 120, b * 0.5 + 120);
+  // Create a slightly darker version of the dominant color
+  let bgColor = color(r * 0.7, g * 0.7, b * 0.7);
   
-  // Create darker shade of the dominant color
-  let darkColor = color(r * 0.4, g * 0.4, b * 0.4);
+  // Fill the background with this color
+  background(bgColor);
   
-  // Create three-color gradient
-  for (let i = 0; i <= height; i++) {
-    let inter;
-    let c;
-    
-    if (i < height / 2) {
-      // Top half: transition from lightColor1 to lightColor2
-      inter = map(i, 0, height/2, 0, 1);
-      c = lerpColor(lightColor1, lightColor2, inter);
-    } else {
-      // Bottom half: transition from lightColor2 to darkColor
-      inter = map(i, height/2, height, 0, 1);
-      c = lerpColor(lightColor2, darkColor, inter);
-    }
-    
-    stroke(c);
-    line(0, i, width, i);
-  }
-  
-  // Apply blur effect
-  drawingContext.filter = 'blur(2px)';
+  // Apply a stronger blur effect
+  drawingContext.filter = 'blur(4px)';
   noFill();
   rect(0, 0, width, height);
   drawingContext.filter = 'none';
