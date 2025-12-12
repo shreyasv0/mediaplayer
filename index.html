@@ -4,99 +4,8 @@
   <script src="https://cdn.jsdelivr.net/npm/p5@1.6.0/lib/p5.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/p5@1.6.0/lib/addons/p5.sound.js"></script>
   
-  <title>Audio Visualizer</title>
-
-  <style>
-    body {
-      margin: 0;
-      background: #111;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-      font-family: sans-serif;
-    }
-
-    #playerContainer {
-      position: relative;
-      border: 2px solid;
-      border-radius: 5px;
-      overflow: hidden;
-      transition: box-shadow 0.3s ease;
-    }
-
-    #playerContainer:hover {
-      box-shadow: 0 0 30px rgba(0, 200, 255, 0.5) !important;
-    }
-
-    #controls {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      padding: 15px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-
-      background: linear-gradient(to top, rgba(40, 40, 40, 0.9), rgba(20, 20, 20, 0.7), rgba(10, 10, 10, 0.5));
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
-
-      box-sizing: border-box;
-      
-      opacity: 1;
-      transition: opacity 0.5s ease;
-    }
-    
-    #controls.playing {
-      opacity: 0;
-    }
-    
-    #playerContainer:hover #controls.playing {
-      opacity: 1;
-    }
-
-    .control-icon {
-      width: 38px;
-      height: 38px;
-      cursor: pointer;
-      user-select: none;
-      transition: transform 0.2s ease;
-    }
-    
-    .control-icon:hover {
-      transform: scale(1.1);
-    }
-
-    #volumeSlider {
-      width: 120px;
-      appearance: none;
-      height: 5px;
-      background: rgba(255, 255, 255, 0.3);
-      outline: none;
-      border-radius: 5px;
-    }
-    
-    #volumeSlider::-webkit-slider-thumb {
-      appearance: none;
-      width: 15px;
-      height: 15px;
-      background: #00c8ff;
-      cursor: pointer;
-      border-radius: 50%;
-    }
-    
-    #volumeSlider::-moz-range-thumb {
-      width: 15px;
-      height: 15px;
-      background: #00c8ff;
-      cursor: pointer;
-      border-radius: 50%;
-      border: none;
-    }
-  </style>
+  <title>Media Player</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="playerContainer">
@@ -112,3 +21,4 @@
   <script src="sketch.js"></script>
 </body>
 </html>
+
