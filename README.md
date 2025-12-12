@@ -39,7 +39,7 @@ Live demo: https://shreyasv0.github.io/mediaplayer
 
 ### **Visualizer**
 
-* The center area shows a frequency-bar visualization reacting to the music.
+* The center area shows a visualization reacting to the music.
 * Colors shift based on audio intensity and bar position.
 
 ### **Album Art & Background**
