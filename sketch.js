@@ -22,7 +22,7 @@ function preload() {
   vol100Img = loadImage("img/volume100.png");
 
   // NEW — album cover image
-  albumCover = loadImage("img/cover.jpg");
+  albumCover = loadImage("img/cover.png");
 }
 
 function setup() {
@@ -123,3 +123,4 @@ function drawAccentGlow() {
 
   pop();
 }
+
