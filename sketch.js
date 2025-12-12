@@ -12,7 +12,6 @@ function preload() {
   song = loadSound("assets/song.mp3");
   coverImg = loadImage("img/cover.png");
 
-  // Load icons
   playImg = loadImage("img/play.png");
   pauseImg = loadImage("img/pause.png");
 
@@ -214,4 +213,5 @@ function drawCoverImage() {
   
   pop();
 }
+
 
