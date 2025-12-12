@@ -122,7 +122,7 @@ function updateVolumeIcon() {
 }
 
 function draw() {
-  // Draw gradient background with lighter shades of the dominant color
+  // Draw gradient background with lighter shades and darker color of the dominant color
   drawGradientBackground();
   
   // Get audio data
@@ -133,9 +133,6 @@ function draw() {
   
   // Draw cover image on the right side
   drawCoverImage();
-  
-  // Draw track info
-  drawTrackInfo();
 }
 
 function drawGradientBackground() {
@@ -148,10 +145,24 @@ function drawGradientBackground() {
   let lightColor1 = color(r * 0.3 + 170, g * 0.3 + 170, b * 0.3 + 170);
   let lightColor2 = color(r * 0.5 + 120, g * 0.5 + 120, b * 0.5 + 120);
   
-  // Create gradient
+  // Create darker shade of the dominant color
+  let darkColor = color(r * 0.4, g * 0.4, b * 0.4);
+  
+  // Create three-color gradient
   for (let i = 0; i <= height; i++) {
-    let inter = map(i, 0, height, 0, 1);
-    let c = lerpColor(lightColor1, lightColor2, inter);
+    let inter;
+    let c;
+    
+    if (i < height / 2) {
+      // Top half: transition from lightColor1 to lightColor2
+      inter = map(i, 0, height/2, 0, 1);
+      c = lerpColor(lightColor1, lightColor2, inter);
+    } else {
+      // Bottom half: transition from lightColor2 to darkColor
+      inter = map(i, height/2, height, 0, 1);
+      c = lerpColor(lightColor2, darkColor, inter);
+    }
+    
     stroke(c);
     line(0, i, width, i);
   }
@@ -234,19 +245,4 @@ function drawCoverImage() {
   drawingContext.shadowBlur = 0;
   
   pop();
-}
-
-function drawTrackInfo() {
-  // Draw track name or info
-  fill(255, 200);
-  textAlign(CENTER);
-  textSize(16);
-  text("Audio Visualizer", width/2, 30);
-  
-  // Draw playback status
-  if (song.isPlaying()) {
-    text("PLAYING", width/2, 50);
-  } else {
-    text("PAUSED", width/2, 50);
-  }
 }
