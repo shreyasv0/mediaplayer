@@ -1,66 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <script src="https://cdn.jsdelivr.net/npm/p5@1.6.0/lib/p5.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/p5@1.6.0/lib/addons/p5.sound.js"></script>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audio Visualiser</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js"></script>
   <style>
     body {
       margin: 0;
-      background: #111;
+      padding: 0;
+      background-color: #121212;
+      font-family: 'Arial', sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       overflow: hidden;
-      font-family: sans-serif;
     }
-
-    #playerContainer {
+    #canvas-container {
       position: relative;
-    }
-
-    #controls {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      padding: 10px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-
-      /* YouTube-style grey overlay */
-      background: rgba(0, 0, 0, 0.45);
-
-      box-sizing: border-box;
-    }
-
-    .control-icon {
-      width: 32px;
-      height: 32px;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    #volumeSlider {
-      width: 120px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
     }
   </style>
 </head>
-
 <body>
-  <div id="playerContainer">
-    <!-- p5 canvas goes here -->
-    <div id="controls">
-      <img id="playBtn" class="control-icon" src="img/play.png">
-
-      <img id="volumeIcon" class="control-icon" src="img/volume50.png">
-
-      <input type="range" id="volumeSlider" min="0" max="100" value="50">
-    </div>
-  </div>
-
+  <div id="canvas-container"></div>
   <script src="sketch.js"></script>
 </body>
 </html>
