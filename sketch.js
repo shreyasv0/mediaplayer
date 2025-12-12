@@ -128,9 +128,13 @@ function togglePlay() {
   if (song.isPlaying()) {
     song.pause();
     playBtn.elt.src = "img/play.png";
+    // When paused, show controls normally
+    select("#controls").removeClass("playing");
   } else {
     song.play();
     playBtn.elt.src = "img/pause.png";
+    // When playing, hide controls unless hovering
+    select("#controls").addClass("playing");
   }
 }
 
