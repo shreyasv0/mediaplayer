@@ -18,9 +18,14 @@
 
     #playerContainer {
       position: relative;
-      box-shadow: 0 0 20px rgba(0, 200, 255, 0.3);
+      border: 2px solid;
       border-radius: 5px;
       overflow: hidden;
+      transition: box-shadow 0.3s ease;
+    }
+
+    #playerContainer:hover {
+      box-shadow: 0 0 30px rgba(0, 200, 255, 0.5) !important;
     }
 
     #controls {
@@ -33,23 +38,50 @@
       align-items: center;
       gap: 15px;
 
-      /* Enhanced overlay with blur effect */
-      background: rgba(0, 0, 0, 0.7);
+      /* Fading grey gradient background */
+      background: linear-gradient(to top, rgba(40, 40, 40, 0.9), rgba(20, 20, 20, 0.7), rgba(10, 10, 10, 0.5));
       backdrop-filter: blur(5px);
       -webkit-backdrop-filter: blur(5px);
 
       box-sizing: border-box;
+      
+      /* Fade transition */
+      opacity: 1;
+      transition: opacity 0.5s ease;
+    }
+    
+    /* When playing, hide controls by default */
+    #controls.playing {
+      opacity: 0;
+    }
+    
+    /* When playing and hovering over controls, show them */
+    #controls.playing:hover {
+      opacity: 1;
     }
 
     .control-icon {
-      width: 32px;
-      height: 32px;
+      width: 38px; /* Increased from 32px by ~20% */
+      height: 38px; /* Increased from 32px by ~20% */
       cursor: pointer;
       user-select: none;
-      transition: transform 0.2s;
+      transition: transform 0.2s, opacity 0.3s ease;
+      opacity: 1;
     }
     
-    .control-icon:hover {
+    /* When playing, hide individual controls by default */
+    #controls.playing .control-icon {
+      opacity: 0;
+    }
+    
+    /* When playing and hovering over individual controls, show them */
+    #controls.playing .control-icon:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+    
+    /* When not playing, normal hover effect */
+    #controls:not(.playing) .control-icon:hover {
       transform: scale(1.1);
     }
 
@@ -60,6 +92,18 @@
       background: rgba(255, 255, 255, 0.3);
       outline: none;
       border-radius: 5px;
+      transition: opacity 0.3s ease;
+      opacity: 1;
+    }
+    
+    /* When playing, hide volume slider by default */
+    #controls.playing #volumeSlider {
+      opacity: 0;
+    }
+    
+    /* When playing and hovering over volume slider, show it */
+    #controls.playing #volumeSlider:hover {
+      opacity: 1;
     }
     
     #volumeSlider::-webkit-slider-thumb {
