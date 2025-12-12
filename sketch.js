@@ -122,18 +122,6 @@ function createStaticBackground() {
     bgGraphics.stroke(c);
     bgGraphics.line(0, i, width, i);
   }
-  
-  // Add some subtle static shapes for texture
-  bgGraphics.noStroke();
-  bgGraphics.fill(r * 0.15 + 30, g * 0.15 + 30, b * 0.15 + 30, 50);
-  
-  // Create fixed positions for shapes using noise function
-  for (let i = 0; i < 8; i++) {
-    let x = noise(i * 0.5) * width;
-    let y = noise(i * 0.5 + 100) * height;
-    let size = noise(i * 0.5 + 200) * 100 + 50;
-    bgGraphics.ellipse(x, y, size);
-  }
 }
 
 function togglePlay() {
