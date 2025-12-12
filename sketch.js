@@ -2,6 +2,7 @@ let song;
 let fft;
 let coverImg;
 let dominantColor;
+let bgGraphics; // For static background
 
 let playBtn, volumeSlider, volumeIcon;
 let playImg, pauseImg;
@@ -27,6 +28,9 @@ function setup() {
   
   // Extract dominant color from cover image
   extractDominantColor();
+  
+  // Create static background graphics
+  createStaticBackground();
 
   fft = new p5.FFT(0.8, 256);
 
@@ -96,6 +100,42 @@ function extractDominantColor() {
   playerContainer.style("box-shadow", `0 0 20px rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.5)`);
 }
 
+function createStaticBackground() {
+  // Create a graphics buffer for the static background
+  bgGraphics = createGraphics(width, height);
+  
+  // Get RGB values from dominant color
+  let r = red(dominantColor);
+  let g = green(dominantColor);
+  let b = blue(dominantColor);
+  
+  // Create gradient with darker shades
+  for (let i = 0; i <= height; i++) {
+    let inter = map(i, 0, height, 0, 1);
+    
+    // Mix between lighter and darker shades
+    let lightShade = color(r * 0.4 + 100, g * 0.4 + 100, b * 0.4 + 100);
+    let darkShade = color(r * 0.2, g * 0.2, b * 0.2);
+    
+    let c = lerpColor(lightShade, darkShade, inter);
+    
+    bgGraphics.stroke(c);
+    bgGraphics.line(0, i, width, i);
+  }
+  
+  // Add some subtle static shapes for texture
+  bgGraphics.noStroke();
+  bgGraphics.fill(r * 0.15 + 30, g * 0.15 + 30, b * 0.15 + 30, 50);
+  
+  // Create fixed positions for shapes using noise function
+  for (let i = 0; i < 8; i++) {
+    let x = noise(i * 0.5) * width;
+    let y = noise(i * 0.5 + 100) * height;
+    let size = noise(i * 0.5 + 200) * 100 + 50;
+    bgGraphics.ellipse(x, y, size);
+  }
+}
+
 function togglePlay() {
   if (song.isPlaying()) {
     song.pause();
@@ -122,8 +162,13 @@ function updateVolumeIcon() {
 }
 
 function draw() {
-  // Draw blurry background using dominant color
-  drawBlurryBackground();
+  // Draw the static background
+  image(bgGraphics, 0, 0);
+  
+  // Apply blur effect to the background
+  drawingContext.filter = 'blur(4px)';
+  image(bgGraphics, 0, 0);
+  drawingContext.filter = 'none';
   
   // Get audio data
   let spectrum = fft.analyze();
@@ -133,37 +178,6 @@ function draw() {
   
   // Draw cover image on the right side
   drawCoverImage();
-}
-
-function drawBlurryBackground() {
-  // Get RGB values from dominant color
-  let r = red(dominantColor);
-  let g = green(dominantColor);
-  let b = blue(dominantColor);
-  
-  // Create a lighter version of the dominant color for the background
-  let bgColor = color(r * 0.3 + 100, g * 0.3 + 100, b * 0.3 + 100);
-  
-  // Fill the background with this color
-  background(bgColor);
-  
-  // Apply a strong blur effect to make the background less distracting
-  drawingContext.filter = 'blur(8px)';
-  
-  // Create some subtle visual interest with random shapes
-  noStroke();
-  fill(r * 0.2 + 50, g * 0.2 + 50, b * 0.2 + 50, 30);
-  
-  // Draw random circles for texture
-  for (let i = 0; i < 10; i++) {
-    let x = random(width);
-    let y = random(height);
-    let size = random(50, 150);
-    ellipse(x, y, size);
-  }
-  
-  // Reset the filter
-  drawingContext.filter = 'none';
 }
 
 function drawFrequencyBars(spectrum) {
