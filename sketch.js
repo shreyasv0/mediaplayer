@@ -121,16 +121,8 @@ function draw() {
   // Get audio data
   let spectrum = fft.analyze();
   
-  // Draw frequency bars
+  // Draw frequency bars with HSB colors
   drawFrequencyBars(spectrum);
-  
-  // Draw cover image as subtle background element
-  push();
-  tint(255, 30); // Make it very transparent
-  imageMode(CENTER);
-  let imgSize = min(width, height) * 0.6;
-  image(coverImg, width/2, height/2, imgSize, imgSize);
-  pop();
   
   // Draw track info
   drawTrackInfo();
@@ -155,15 +147,14 @@ function drawFrequencyBars(spectrum) {
     let x = i * barWidth;
     let y = height - h;
     
-    // Dynamic color based on frequency and accent color
-    let r = red(accentColor);
-    let g = green(accentColor);
-    let b = blue(accentColor);
+    // Dynamic color using HSB mode for vibrant colors
+    let hue = map(i, 0, bars, 200, 280);
+    let sat = map(amp, 0, 255, 50, 100);
+    let bright = map(amp, 0, 255, 40, 100);
     
-    // Vary brightness based on amplitude
-    let brightness = map(amp, 0, 255, 0.3, 1);
-    
-    fill(r * brightness, g * brightness, b * brightness, 200);
+    colorMode(HSB);
+    fill(hue, sat, bright, 200);
+    colorMode(RGB);
     
     // Draw bar with rounded top
     rect(x, y, barWidth - 2, h, 5);
