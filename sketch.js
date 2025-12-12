@@ -93,7 +93,7 @@ function extractDominantColor() {
   // Apply dominant color to player container
   let playerContainer = select("#playerContainer");
   playerContainer.style("border-color", `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`);
-  playerContainer.style("box-shadow", `0 0 20px rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.3)`);
+  playerContainer.style("box-shadow", `0 0 20px rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.5)`);
 }
 
 function togglePlay() {
@@ -122,8 +122,8 @@ function updateVolumeIcon() {
 }
 
 function draw() {
-  // Dark background
-  background(10, 10, 20);
+  // Draw gradient background with lighter shades of the dominant color
+  drawGradientBackground();
   
   // Get audio data
   let spectrum = fft.analyze();
@@ -131,11 +131,36 @@ function draw() {
   // Draw frequency bars with HSB colors
   drawFrequencyBars(spectrum);
   
-  // Draw cover image in the center
+  // Draw cover image on the right side
   drawCoverImage();
   
   // Draw track info
   drawTrackInfo();
+}
+
+function drawGradientBackground() {
+  // Get RGB values from dominant color
+  let r = red(dominantColor);
+  let g = green(dominantColor);
+  let b = blue(dominantColor);
+  
+  // Create lighter shades of the dominant color
+  let lightColor1 = color(r * 0.3 + 170, g * 0.3 + 170, b * 0.3 + 170);
+  let lightColor2 = color(r * 0.5 + 120, g * 0.5 + 120, b * 0.5 + 120);
+  
+  // Create gradient
+  for (let i = 0; i <= height; i++) {
+    let inter = map(i, 0, height, 0, 1);
+    let c = lerpColor(lightColor1, lightColor2, inter);
+    stroke(c);
+    line(0, i, width, i);
+  }
+  
+  // Apply blur effect
+  drawingContext.filter = 'blur(2px)';
+  noFill();
+  rect(0, 0, width, height);
+  drawingContext.filter = 'none';
 }
 
 function drawFrequencyBars(spectrum) {
@@ -179,8 +204,8 @@ function drawCoverImage() {
   push();
   imageMode(CENTER);
   
-  // Calculate size to fit within the canvas while maintaining aspect ratio
-  let maxSize = min(width, height) * 0.5;
+  // Calculate size - make it bigger than before
+  let maxSize = min(width, height) * 0.7;
   let imgWidth = coverImg.width;
   let imgHeight = coverImg.height;
   
@@ -188,12 +213,22 @@ function drawCoverImage() {
   let displayWidth = imgWidth * scale;
   let displayHeight = imgHeight * scale;
   
-  // Add a subtle glow effect
-  drawingContext.shadowColor = `rgba(${red(dominantColor)}, ${green(dominantColor)}, ${blue(dominantColor)}, 0.5)`;
-  drawingContext.shadowBlur = 20;
+  // Position to the right side of the canvas
+  let xPos = width * 0.75;
+  let yPos = height / 2;
+  
+  // Add glow border effect using the dominant color
+  let r = red(dominantColor);
+  let g = green(dominantColor);
+  let b = blue(dominantColor);
+  
+  drawingContext.shadowColor = `rgba(${r}, ${g}, ${b}, 0.8)`;
+  drawingContext.shadowBlur = 25;
+  drawingContext.shadowOffsetX = 0;
+  drawingContext.shadowOffsetY = 0;
   
   // Draw the image
-  image(coverImg, width/2, height/2, displayWidth, displayHeight);
+  image(coverImg, xPos, yPos, displayWidth, displayHeight);
   
   // Reset shadow
   drawingContext.shadowBlur = 0;
